@@ -3,9 +3,11 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "ItemData", menuName = "Item")]
 public class Item : ScriptableObject, IItem
 {
-	string IItem.Name => name;
-	Sprite IItem.Icon => icon;
+	public int Id => itemId;
+	public string Name => itemName;
+	public Sprite Sprite => sprite;
 
-	[SerializeField] private string name = "Item";
-	[SerializeField] private Sprite icon;
+	[SerializeField] private int itemId;
+	[SerializeField] private string itemName = "Item";
+	[SerializeField] private Sprite sprite;
 }

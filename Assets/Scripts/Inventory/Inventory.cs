@@ -3,39 +3,69 @@ using UnityEngine;
 
 public class Inventory : MonoBehaviour
 {
-    [SerializeField] private List<Item> startItems = new List<Item>();
-    [SerializeField] private InventoryCell inventoryCellTemplate;
-    [SerializeField] private Transform container;
-    private List<Item> inventoryItems = new List<Item>();
-    public IReadOnlyList<Item> InventoryItems => inventoryItems.AsReadOnly();
+	[SerializeField] private List<Item> startItems = new List<Item>();
+	[SerializeField] private Item Empty;
 
-    private void Awake()
-    {
-        for (int i = 0; i < startItems.Count; i++)
-        {
-            AddItem(startItems[i]);
-        }
-    }
+	private Dictionary<int, InventoryItemData> inventoryItems = new Dictionary<int, InventoryItemData>();
+	private List<IInventoryObserver> observers = new List<IInventoryObserver>();
 
-	private void OnEnable()
+	private void Awake()
 	{
-        Render(inventoryItems);
-    }
-
-    public void Render(List<Item> Items)
-	{
-        foreach (Transform con in container)
-            Destroy(con.gameObject);
-
-        Items.ForEach(item =>
-        {
-            InventoryCell cell = Instantiate(inventoryCellTemplate, container);
-            cell.Render(item);
-        });
+		for (int i = 0; i < startItems.Count; i++)
+		{
+			AddItem(new InventoryItemData(startItems[i].Id, startItems[i].Name, startItems[i].Sprite, 1));
+		}
 	}
 
-	private void AddItem(Item item)
-    {
-        inventoryItems.Add(item);
-    }
+	private void AddItem(InventoryItemData iidata)
+	{
+		if (iidata.Count < 1)
+		{
+			throw new System.ArgumentException("Value cannot be negative or 0");
+		}
+		if (inventoryItems.ContainsKey(iidata.Id))
+		{
+			iidata.Count = iidata.Count + inventoryItems.Count;
+			inventoryItems[iidata.Id] = iidata;
+		}
+		else
+			inventoryItems.Add(iidata.Id, iidata);
+	}
+
+	public void DeleteItem(int itemId)
+	{
+		if (inventoryItems.ContainsKey(itemId))
+		{
+			inventoryItems.Remove(itemId);
+		}
+		NotifyObservers();
+	}
+
+	public void OpenInventory()
+	{
+		NotifyObservers();
+	}
+
+	public Dictionary<int, InventoryItemData> GetInventoryItems()
+	{
+		return inventoryItems;
+	}
+
+	public void RegisterObserver(IInventoryObserver observer)
+	{
+		observers.Add(observer);
+	}
+
+	public void UnregisterObserver(IInventoryObserver observer)
+	{
+		observers.Remove(observer);
+	}
+
+	private void NotifyObservers()
+	{
+		foreach (var observer in observers)
+		{
+			observer.OnInventoryOpen();
+		}
+	}
 }
