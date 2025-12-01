@@ -23,6 +23,10 @@ namespace CM.HealthSystem {
             if (HealthSystem.TryGetHealthSystem(getHealthSystemGameObject, out HealthSystem healthSystem)) {
                 SetHealthSystem(healthSystem);
             }
+			else
+			{
+                Debug.Log("did't fine health system");
+			}
         }
 
         /// <summary>

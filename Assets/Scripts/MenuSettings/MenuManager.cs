@@ -24,7 +24,7 @@ public class MenuManager : MonoBehaviour
     public void OpenInventoryMenu()
 	{
         Pause();
-        inventoryMenu.SetActive(true); // Показываем меню паузы
+        inventoryMenu.SetActive(true);
     }
 
     public void CloseInventoryMeny()

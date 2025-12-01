@@ -1,23 +1,13 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Inventory : MonoBehaviour
 {
-	[SerializeField] private List<Item> startItems = new List<Item>();
-	[SerializeField] private Item Empty;
-
 	private Dictionary<int, InventoryItemData> inventoryItems = new Dictionary<int, InventoryItemData>();
 	private List<IInventoryObserver> observers = new List<IInventoryObserver>();
 
-	private void Awake()
-	{
-		for (int i = 0; i < startItems.Count; i++)
-		{
-			AddItem(new InventoryItemData(startItems[i].Id, startItems[i].Name, startItems[i].Sprite, 1));
-		}
-	}
-
-	private void AddItem(InventoryItemData iidata)
+	public void AddItem(InventoryItemData iidata)
 	{
 		if (iidata.Count < 1)
 		{
@@ -25,18 +15,24 @@ public class Inventory : MonoBehaviour
 		}
 		if (inventoryItems.ContainsKey(iidata.Id))
 		{
-			iidata.Count = iidata.Count + inventoryItems.Count;
+			iidata.Count = iidata.Count + inventoryItems[iidata.Id].Count;
 			inventoryItems[iidata.Id] = iidata;
 		}
 		else
 			inventoryItems.Add(iidata.Id, iidata);
+		NotifyObservers();
 	}
 
 	public void DeleteItem(int itemId)
 	{
 		if (inventoryItems.ContainsKey(itemId))
 		{
+			Debug.Log(inventoryItems[itemId] + "is deleted");
 			inventoryItems.Remove(itemId);
+		}
+		else
+		{
+			Debug.LogWarning($"Item with ID {itemId} not found in inventory.");
 		}
 		NotifyObservers();
 	}
@@ -65,7 +61,7 @@ public class Inventory : MonoBehaviour
 	{
 		foreach (var observer in observers)
 		{
-			observer.OnInventoryOpen();
+			observer.OnInventoryChange();
 		}
 	}
 }

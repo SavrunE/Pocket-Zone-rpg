@@ -15,7 +15,7 @@ public class InventoryMenu : MonoBehaviour, IInventoryObserver
 		inventory.RegisterObserver(this);
 	}
 
-	public void OnInventoryOpen()
+	public void OnInventoryChange()
 	{
 		MenuManager.Instance.OpenInventoryMenu();
 		Render();

@@ -1,4 +1,4 @@
 public interface IInventoryObserver
 {
-    void OnInventoryOpen();
+    void OnInventoryChange();
 }

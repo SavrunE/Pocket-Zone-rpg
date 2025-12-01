@@ -11,15 +11,7 @@ public class PlayerShoot : MonoBehaviour
 
     private Enemy closestEnemy;
 
-    private void Update()
-    {
-        if (Input.GetButtonDown("Fire1")) // Обычно это левая кнопка мыши или Ctrl
-        {
-            ShootAtClosestEnemy();
-        }
-    }
-
-    private void ShootAtClosestEnemy()
+    public void ShootAtClosestEnemy()
     {
         Collider2D[] enemiesInRange = Physics2D.OverlapCircleAll(transform.position, detectionRadius);
         float closestDistance = Mathf.Infinity;
@@ -73,10 +65,13 @@ public class PlayerShoot : MonoBehaviour
             float percentageComplete = distanceCovered / journeyLength;
 
             // Если снаряд прошел 95% пути, уничтожаем его
-            if (percentageComplete >= 0.95f)
+            if (percentageComplete >= 0.7f)
             {
                 Destroy(projectile);
-                closestEnemy.TakeDamage(playerDamage);
+				if (closestEnemy!= null)
+				{
+                    closestEnemy.TakeDamage(playerDamage);
+                }
                 yield break; // Выход из корутины
             }
 

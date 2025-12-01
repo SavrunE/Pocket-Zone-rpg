@@ -15,4 +15,12 @@ public class InventoryItemData
         this.Sprite = sprite;
         this.Count = count;
     }
+
+    public InventoryItemData(Item item, int count)
+	{
+        this.Id = item.Id;
+        this.Name = item.Name;
+        this.Sprite = item.Sprite;
+        this.Count = count;
+    }
 }
